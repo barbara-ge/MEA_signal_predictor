@@ -13,9 +13,9 @@ directory = '/Volumes/Elements/spring2022/final/week4/'
 cultures = ['NS', '8020', '5050']
 
 ff = 0
-R2_array = np.empty([540,3])
-data_real_array = np.empty([2000000,3])
-data_pred_array = np.empty([2000000, 3])
+#R2_array = np.empty([540,3])
+#data_real = np.empty([2000000,3])
+#data_pred = np.empty([2000000, 3])
 
 for folder in cultures:
     ff += 1
@@ -23,8 +23,8 @@ for folder in cultures:
     os.chdir(population)
     aa = os.getcwd()
     R2 = []
-    data_real = []
-    data_pred = []
+    data_real = np.zeros([1,1])
+    data_pred = np.zeros([1,1])
 
     for meas in os.listdir(aa):
         mea_num = os.path.join(aa, meas)
@@ -67,8 +67,6 @@ for folder in cultures:
                     # Make predictions
                     dt_pred = dt_reg.predict(X_test)
 
-                    data_real.append(X_test)
-                    data_pred.append(dt_pred)
 
                     r2 = scipy.stats.pearsonr(test['y'], dt_pred)
 
@@ -95,24 +93,21 @@ for folder in cultures:
                     fig.savefig(figure_name, dpi=300)
                     plt.close()
 
-    R2 = np.array(R2)
-    R2 = R2.reshape(len(R2),1)
-    data_real = np.array(data_real)
-    data_real = data_real.reshape(data_real.shape[0]*data_real.shape[1], 1)
-    data_pred = np.array(data_pred)
-    data_pred = data_pred.reshape(data_pred.shape[0]*data_pred.shape[1], 1)
-    R2_array = np.array(R2_array)
-    data_real_array = np.array(data_real_array)
-    data_pred_array = np.array(data_pred_array)
+                    dt_pred = dt_pred.reshape(len(dt_pred),1)
+                    data_pred = np.vstack((data_pred, dt_pred))
 
-    R2_array[ff-1] = R2[0]
-    data_real_array[ff-1] = data_real[0]
-    data_pred_array[ff-1] = data_pred[0]
+                    data_real = np.concatenate((data_real, X_test))
+
+    filename_r2 = 'R2_prediction_' + cultures[ff-1] + '.csv'
+    filename_pred = 'Pred_prediction_' + cultures[ff-1] + '.csv'
+    filename_real = 'Real_prediction_' + cultures[ff-1] + '.csv'
+    np.savetxt(directory + 'Predictor/' + filename_r2, R2, delimiter=',')
+    np.savetxt(directory + 'Predictor/' + filename_pred, data_pred, delimiter=',')
+    np.savetxt(directory + 'Predictor/' + filename_real, data_real, delimiter=',')
 
 
 
-np.savetxt('R2_prediction.csv', R2_array, delimiter=',')
-np.savetxt('Pred_prediction.csv', data_pred_array, delimiter=',')
-np.savetxt('Real_prediction.csv', data_real_array, delimiter=',')
+
+
 
 
