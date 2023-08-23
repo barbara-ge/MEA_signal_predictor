@@ -47,7 +47,7 @@ for folder in cultures:
                     y = func.butter_lowpass_filter(mdata, lowcut, fs, order=5)
                     df = pd.DataFrame(y, columns=['Voltage'])
                     del (data, mdata)
-                    downsampled_df = df.iloc[::1000, :]  # from 25kHz to 25 Hz
+                    downsampled_df = df.iloc[::100, :]  # from 25kHz to 250 Hz
                     del (df)
                     downsampled_df['y'] = downsampled_df['Voltage'].shift(-1)
 
@@ -89,7 +89,7 @@ for folder in cultures:
                     plt.legend()
                     #plt.show()
                     plt.draw()
-                    figure_name = 'prediction_' + str(folder) + '_' + str(meas) + '_ch' + str(ch_data) + '.pdf'
+                    figure_name = 'prediction_' + str(folder) + '_' + str(meas) + '_ch' + str(ch_data) + '_250Hz.pdf'
                     fig.savefig(figure_name, dpi=300)
                     plt.close()
 
@@ -98,9 +98,9 @@ for folder in cultures:
 
                     data_real = np.concatenate((data_real, X_test))
 
-    filename_r2 = 'R2_prediction_' + cultures[ff-1] + '.csv'
-    filename_pred = 'Pred_prediction_' + cultures[ff-1] + '.csv'
-    filename_real = 'Real_prediction_' + cultures[ff-1] + '.csv'
+    filename_r2 = 'R2_prediction_' + cultures[ff-1] + '_250Hz.csv'
+    filename_pred = 'Pred_prediction_' + cultures[ff-1] + '_250Hz.csv'
+    filename_real = 'Real_prediction_' + cultures[ff-1] + '_250Hz.csv'
     np.savetxt(directory + 'Predictor/' + filename_r2, R2, delimiter=',')
     np.savetxt(directory + 'Predictor/' + filename_pred, data_pred, delimiter=',')
     np.savetxt(directory + 'Predictor/' + filename_real, data_real, delimiter=',')
